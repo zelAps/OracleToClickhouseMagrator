@@ -8,6 +8,9 @@ namespace Migrator.Cli.Commands;
 /// </summary>
 public sealed class TableNamesSettings : CommonSettings
 {
+    /// <summary>
+    /// Список таблиц, над которыми выполняется операция.
+    /// </summary>
     [CommandArgument(0, "[TABLES]")]
     public string[] TableNames { get; init; } = [];
 }
