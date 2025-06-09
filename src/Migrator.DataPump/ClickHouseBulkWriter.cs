@@ -42,6 +42,7 @@ public sealed class ClickHouseBulkWriter : IAsyncDisposable
     /// <summary>Отправляет один блок строк.</summary>
     public async Task WriteAsync(IEnumerable<object?[]> rows, CancellationToken ct = default)
     {
+        // ClickHouseBulkCopy принимает DataTable, поэтому переносим массивы
         var tbl = new DataTable();
         var firstRow = rows.First();
         for (var i = 0; i < firstRow.Length; i++)
@@ -50,6 +51,7 @@ public sealed class ClickHouseBulkWriter : IAsyncDisposable
         foreach (var r in rows)
             tbl.Rows.Add(r);
 
+        // отправка подготовленной таблицы одним запросом
         await _bulk.WriteToServerAsync(tbl, ct);
     }
 
