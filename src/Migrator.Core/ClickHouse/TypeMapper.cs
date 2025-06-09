@@ -6,8 +6,13 @@ namespace Migrator.Core.ClickHouse;
 
 /// <summary>
 /// Преобразует Oracle-тип колонки → ClickHouse-тип.
-/// Таблица соответствия может дополняться внешним YAML (`typemap.yaml`).
 /// </summary>
+/// <remarks>
+/// Базовая таблица соответствий задана в коде и охватывает
+/// наиболее распространённые типы. Дополнительные правила могут
+/// быть определены во внешнем файле <c>typemap.yaml</c> и переданы
+/// в конструктор.
+/// </remarks>
 public sealed class TypeMapper
 {
     private readonly Dictionary<string, string> _map;
@@ -35,7 +40,15 @@ public sealed class TypeMapper
             foreach (var (k, v) in extra) _map[k] = v;
     }
 
-    /// <summary>Заполняет поле <see cref="ColumnDef.ClickHouseType"/>.</summary>
+    /// <summary>
+    /// Заполняет поле <see cref="ColumnDef.ClickHouseType"/> для указанной колонки.
+    /// </summary>
+    /// <remarks>
+    /// Числовые типы обрабатываются отдельно: при отсутствии масштаба
+    /// выбирается целочисленный тип подходящего размера, иначе формируется
+    /// <c>Decimal</c>. Для остальных используется таблица соответствия, при
+    /// необходимости оборачиваемая в <c>Nullable(...)</c>.
+    /// </remarks>
     public ColumnDef Map(ColumnDef c)
     {
         if (c.SourceType.Equals("NUMBER", StringComparison.OrdinalIgnoreCase))

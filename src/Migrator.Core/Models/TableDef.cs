@@ -6,6 +6,11 @@ namespace Migrator.Core.Models;
 /// <summary>
 /// Модель таблицы после чтения из Oracle и применения конфигурации.
 /// </summary>
+/// <remarks>
+/// Содержит итоговый набор колонок (уже переименованных и промапленных),
+/// сведения о первичном и шардинг-ключе, а также выражение разбиения,
+/// на основе которых формируются DDL-скрипты для ClickHouse.
+/// </remarks>
 public sealed class TableDef
 {
     public required string Source { get; init; }   // EMPLOYEES
