@@ -42,6 +42,7 @@ public sealed class OracleStreamReader : IAsyncDisposable
     public async IAsyncEnumerable<ReadOnlyMemory<object?[]>> ReadAsync(
         [EnumeratorCancellation] CancellationToken ct = default)
     {
+        // буфер для строк текущего блока
         var buffer = new List<object?[]>(_batchSize);
 
         while (await _rdr.ReadAsync(ct))
@@ -52,12 +53,14 @@ public sealed class OracleStreamReader : IAsyncDisposable
 
             if (buffer.Count >= _batchSize)
             {
+                // достигнут размер батча – возвращаем накопленные строки
                 yield return buffer.ToArray();
                 buffer.Clear();
             }
         }
 
         if (buffer.Count > 0)
+            // финальный неполный блок
             yield return buffer.ToArray();
     }
 
