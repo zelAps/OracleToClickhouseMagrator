@@ -1,4 +1,4 @@
-﻿using Migrator.Core.Models;
+using Migrator.Core.Models;
 using System;
 using System.Collections.Generic;
 
@@ -37,7 +37,12 @@ public sealed class TypeMapper
 
         // подклеиваем кастомные/переопределённые
         if (extra is not null)
-            foreach (var (k, v) in extra) _map[k] = v;
+        {
+            foreach (var (k, v) in extra)
+            {
+                _map[k] = v;
+            }
+        }
     }
 
     /// <summary>
@@ -55,21 +60,34 @@ public sealed class TypeMapper
         {
             // без scale → целое
             if ((c.Scale is null or 0) && c.Precision is <= 9)
+            {
                 c.ClickHouseType = "Int32";
+            }
             else if ((c.Scale is null or 0) && c.Precision is <= 18)
+            {
                 c.ClickHouseType = "Int64";
+            }
             else
+            {
                 c.ClickHouseType = $"Decimal({c.Precision ?? 38},{c.Scale ?? 0})";
+            }
 
-            if (c.Nullable) c.ClickHouseType = $"Nullable({c.ClickHouseType})";
+            if (c.Nullable)
+            {
+                c.ClickHouseType = $"Nullable({c.ClickHouseType})";
+            }
             return c;
         }
 
         if (!_map.TryGetValue(c.SourceType, out var chType))
+        {
             chType = "String";                       // fallback
+        }
 
         if (c.Nullable && !chType.StartsWith("Nullable"))
+        {
             chType = $"Nullable({chType})";
+        }
 
         c.ClickHouseType = chType;
         return c;

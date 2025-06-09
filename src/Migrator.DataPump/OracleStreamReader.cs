@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data;
 using Oracle.ManagedDataAccess.Client;
 using Migrator.Core.Models;
@@ -33,7 +33,12 @@ public sealed class OracleStreamReader : IAsyncDisposable
         _cmd.FetchSize = batchSize * 1024;   // ~1K per row heuristic
 
         if (parameters is not null)
-            foreach (var p in parameters) _cmd.Parameters.Add(p);
+        {
+            foreach (var p in parameters)
+            {
+                _cmd.Parameters.Add(p);
+            }
+        }
 
         _rdr = _cmd.ExecuteReader(CommandBehavior.SequentialAccess);
     }
@@ -60,8 +65,10 @@ public sealed class OracleStreamReader : IAsyncDisposable
         }
 
         if (buffer.Count > 0)
+        {
             // финальный неполный блок
             yield return buffer.ToArray();
+        }
     }
 
     public async ValueTask DisposeAsync()

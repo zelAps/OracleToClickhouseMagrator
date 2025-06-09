@@ -1,4 +1,4 @@
-﻿using Spectre.Console.Cli;
+using Spectre.Console.Cli;
 using Migrator.Core.Config;
 using Migrator.Core.ClickHouse;
 using Migrator.Core.Oracle;

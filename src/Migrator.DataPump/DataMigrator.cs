@@ -1,4 +1,4 @@
-﻿using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Client;
 using ClickHouse.Client.ADO;
 using Migrator.Core.Models;
 using Migrator.DataPump;
