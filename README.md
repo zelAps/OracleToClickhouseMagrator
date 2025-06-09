@@ -16,3 +16,4 @@ dotnet run --project src/Migrator.Cli -- create all -c examples/config.yaml
 
 # 3. переносим данные
 dotnet run --project src/Migrator.Cli -- migrate all -c examples/config.yaml
+```
