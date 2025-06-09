@@ -16,6 +16,15 @@ public sealed class ClickHouseDdlBuilder(MigratorConfig cfg)
 
     /* ---------- публичный API ---------- */
 
+    /// <summary>
+    /// Формирует DDL для локальной таблицы ReplicatedMergeTree.
+    /// </summary>
+    /// <remarks>
+    /// Генерируется секция <c>CREATE TABLE</c> со всеми колонками,
+    /// путём сборки Zookeeper-пути и установкой выражений PARTITION BY
+    /// и ORDER BY. Список колонок и выражения передаются через
+    /// <see cref="TableDef"/>.
+    /// </remarks>
     public string BuildLocal(TableDef t)
     {
         var sb = new StringBuilder();
@@ -38,6 +47,13 @@ public sealed class ClickHouseDdlBuilder(MigratorConfig cfg)
         return sb.ToString();
     }
 
+    /// <summary>
+    /// Строит определение распределённой таблицы поверх локальной.
+    /// </summary>
+    /// <remarks>
+    /// Если shardKey не задан ни в таблице, ни в конфигурации,
+    /// используется первый столбец первичного ключа или случайное значение.
+    /// </remarks>
     public string BuildDistributed(TableDef t)
     {
         var shardKey = t.ShardKey
@@ -70,6 +86,9 @@ public sealed class ClickHouseDdlBuilder(MigratorConfig cfg)
 
     /* ---------- пакетный билд ---------- */
 
+    /// <summary>
+    /// Формирует DDL обоих уровней (локальной и распределённой) одной строкой.
+    /// </summary>
     public string BuildAll(TableDef t)
         => $"{BuildLocal(t)}\n\n{BuildDistributed(t)}";
 }

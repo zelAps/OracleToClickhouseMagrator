@@ -46,6 +46,11 @@ public sealed class MigratorConfig
 
     /* ---------- загрузка ---------- */
 
+    /// <summary>
+    /// Загружает конфигурацию из файла YAML или JSON.
+    /// </summary>
+    /// <param name="path">Путь к файлу конфигурации.</param>
+    /// <param name="ct">Токен отмены операции.</param>
     public static async Task<MigratorConfig> LoadAsync(string path, CancellationToken ct = default)
     {
         await using var fs = File.OpenRead(path);
@@ -60,6 +65,9 @@ public sealed class MigratorConfig
         };
     }
 
+    /// <summary>
+    /// Разбирает YAML-текст в объект конфигурации.
+    /// </summary>
     private static MigratorConfig LoadYaml(string text)
     {
         var deserializer = new DeserializerBuilder()

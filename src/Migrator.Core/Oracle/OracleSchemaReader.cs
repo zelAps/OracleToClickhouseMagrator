@@ -57,6 +57,14 @@ public sealed class OracleSchemaReader(string connectionString)
 
     /* ----- приватные методы ----- */
 
+    /// <summary>
+    /// Запрашивает список колонок указанной таблицы из системного каталога
+    /// Oracle.
+    /// </summary>
+    /// <param name="conn">Открытое подключение к Oracle.</param>
+    /// <param name="tableName">Имя таблицы без учёта регистра.</param>
+    /// <param name="ct">Токен отмены операции.</param>
+    /// <returns>Коллекция описаний колонок.</returns>
     private static async Task<List<ColumnDef>> GetColumnsAsync(
         OracleConnection conn, string tableName, CancellationToken ct)
     {
@@ -102,6 +110,14 @@ ORDER BY COLUMN_ID";
         return list;
     }
 
+    /// <summary>
+    /// Читает из системных представлений список колонок, образующих
+    /// первичный ключ таблицы.
+    /// </summary>
+    /// <param name="conn">Открытое подключение к Oracle.</param>
+    /// <param name="tableName">Имя таблицы.</param>
+    /// <param name="ct">Токен отмены операции.</param>
+    /// <returns>Список имён колонок в порядке их позиции в ключе.</returns>
     private static async Task<List<string>> GetPrimaryKeyAsync(
         OracleConnection conn, string tableName, CancellationToken ct)
     {
@@ -128,9 +144,21 @@ ORDER BY acc.POSITION";
         return pk;
     }
 
+    /// <summary>
+    /// Формирует выражение разбиения таблицы в ClickHouse.
+    /// </summary>
+    /// <remarks>
+    /// Используется простая эвристика &mdash; выбирается первая колонка
+    /// с типом <c>DATE</c> или <c>TIMESTAMP</c>. Если такая колонка найдена,
+    /// данные будут партиционироваться по месяцу<br/>"toYYYYMM(column)".
+    /// Иначе возвращается выражение с константой, что фактически складывает
+    /// все строки в одну партицию. Подобный подход может не подойти для
+    /// таблиц без явной даты изменения и потребовать ручной настройки.
+    /// </remarks>
+    /// <param name="cols">Колонки таблицы.</param>
+    /// <returns>Строковое выражение для секции <c>PARTITION BY</c>.</returns>
     private static string BuildPartition(IEnumerable<ColumnDef> cols)
     {
-        // Простейшая эвристика: ищем date/timestamp колонку c именем like '%date%'
         var dateCol = cols.FirstOrDefault(c =>
             c.SourceType.StartsWith("DATE", StringComparison.OrdinalIgnoreCase) ||
             c.SourceType.StartsWith("TIMESTAMP", StringComparison.OrdinalIgnoreCase));
