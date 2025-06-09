@@ -1,4 +1,4 @@
-﻿namespace Migrator.Core.Models;
+namespace Migrator.Core.Models;
 
 /// <summary>
 /// Описание колонки, полученное из Oracle

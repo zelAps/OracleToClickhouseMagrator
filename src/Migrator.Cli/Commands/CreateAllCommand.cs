@@ -1,4 +1,4 @@
-﻿using Spectre.Console;
+using Spectre.Console;
 using Spectre.Console.Cli;
 using Migrator.Core.Config;
 using Migrator.Core.ClickHouse;
@@ -35,9 +35,13 @@ public sealed class CreateAllCommand : AsyncCommand<CommonSettings>
             var sql = ddl.BuildAll(tbl);
 
             if (s.DryRun)
+            {
                 AnsiConsole.Write(new Markup($"[grey]{Markup.Escape(sql)}[/]\n"));
+            }
             else
+            {
                 await ExecClickHouseAsync(cfg, sql); // выполняем запрос
+            }
         }
 
         return 0;

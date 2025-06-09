@@ -1,4 +1,4 @@
-﻿using ClickHouse.Client.ADO;
+using ClickHouse.Client.ADO;
 using ClickHouse.Client.Copy;
 using ClickHouse.Client.Types;
 using System;
@@ -46,10 +46,14 @@ public sealed class ClickHouseBulkWriter : IAsyncDisposable
         var tbl = new DataTable();
         var firstRow = rows.First();
         for (var i = 0; i < firstRow.Length; i++)
+        {
             tbl.Columns.Add(new DataColumn($"c{i}", typeof(object)));
+        }
 
         foreach (var r in rows)
+        {
             tbl.Rows.Add(r);
+        }
 
         // отправка подготовленной таблицы одним запросом
         await _bulk.WriteToServerAsync(tbl, ct);

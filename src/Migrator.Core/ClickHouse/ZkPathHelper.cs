@@ -1,4 +1,4 @@
-﻿namespace Migrator.Core.ClickHouse;
+namespace Migrator.Core.ClickHouse;
 
 /// <summary>
 /// Формирует корректный ZooKeeper-путь ReplicatedMergeTree.

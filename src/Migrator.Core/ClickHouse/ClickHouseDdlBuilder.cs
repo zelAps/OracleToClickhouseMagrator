@@ -1,4 +1,4 @@
-﻿using Migrator.Core.Config;
+using Migrator.Core.Config;
 using Migrator.Core.Models;
 using System;
 using System.Collections.Generic;
